@@ -126,8 +126,10 @@ func (s *Storage) Keys(pattern string) []string {
 		if checkIfExpired(&item.ExpiresAt, now){
 			continue
 		}
-		panic("not implemented")
-		keys = append(keys, key)
+
+		if pattern == "*" || matchPattern(pattern, key) {
+			keys = append(keys, key)
+		}
 	}
 
 	return keys
@@ -147,6 +149,28 @@ func (s *Storage) CleanupExired() int {
 	}
 
 	return count
+}
+
+func matchPattern(pattern, key string) bool {
+	if pattern == "*" {
+		return true
+	}
+
+	if len(pattern) == 0 {
+		return key == ""
+	}
+
+	if pattern[len(pattern)-1] == '*' && len(pattern) > 1 {
+		prefix := pattern[:len(pattern)-1]
+		return len(key) >= len(prefix) && key[:len(prefix)] == prefix
+	}
+
+	if pattern[0] == '*' && len(pattern) > 1 {
+		suffix := pattern[1:]
+		return len(key) >= len(suffix) && key[len(key) - len(suffix):] == suffix
+	}
+
+	return key == pattern
 }
 
 func checkIfExpired(expiresAt *time.Time, now *time.Time) bool {

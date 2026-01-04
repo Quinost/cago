@@ -87,5 +87,10 @@ func (s *CacheService) TTL(key string) (time.Duration, error) {
 }
 
 func (s *CacheService) Keys(pattern string) ([]string, error) {
-	return nil, nil
+	if pattern == "" {
+		pattern = "*"
+	}
+
+	keys := s.storage.Keys(pattern)
+	return keys, nil
 }
