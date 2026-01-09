@@ -35,7 +35,6 @@ func (s *RESPServer) Run() error {
 	defer listener.Close()
 
 	fmt.Printf("RESP2 server listening on %s\n", addr)
-	fmt.Printf("Default TTL: %v, Cleanup interval: %v\n", s.cfg.DefaultTTL, s.cfg.CleanupInterval)
 
 	go func() {
 		<-s.ctx.Done()
